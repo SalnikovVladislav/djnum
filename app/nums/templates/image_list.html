@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image List</title>
+</head>
+<body>
+    <h2>Image List</h2>
+    <hr>
+    <a href="{% url 'upload_image' %}"><button>Добавить</button></a>
+    <hr>
+    {% for image in images %}
+        <center>
+            <div>
+                <p>{{ image.title }}</p>
+                <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 50%; height: auto;">
+                <br>
+                {% if image.status == "1" %}
+                    <p style="background-color: #7CFC00;">Правильно</p>
+                <p>Ответ сети: "{{ image.nn_answer }}"</p>
+                {% elif image.status == "0" %}
+                    <p style="background-color: #FFA07A;">Неправильно</p>
+                <p>Ответ сети: "{{ image.nn_answer }}"</p>
+                {% elif image.status == "-1" %}
+                    <p>Не проверено</p>
+                    <p>Ответ сети: "{{ image.nn_answer }}"</p>
+                    <p>Правильно?</p>
+                    <form method="post" action="{% url 'yes_logic' image.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Да</button>
+                    </form>
+
+                    <form method="post" action="{% url 'no_logic' image.id %}">
+                        {% csrf_token %}
+                        <button type="submit" style="margin-top: 10px;">Нет</button>
+                    </form>
+                {% else %}
+                    <p>Статус не определен</p>
+                    <p>Ответ сети: "{{ image.nn_answer }}"</p>
+                <p>Правильно?</p>
+                <form method="post" action="{% url 'yes_logic' image.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Да</button>
+                </form>
+
+                <form method="post" action="{% url 'no_logic' image.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="margin-top: 10px;">Нет</button>
+                </form>
+                {% endif %}
+            </div>
+        </center>
+    <form method="post" action="{% url 'delete_image' image.id %}">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: #FFA07A;margin-top: 10px;margin-left: 30%;">Удалить</button>
+                </form>
+    <hr>
+    {% endfor %}
+</body>
+</html>
